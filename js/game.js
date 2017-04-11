@@ -23,22 +23,22 @@ window.GameConstants = {
 };
 
 window.Game = (function () {
-  /**
-   * @const
-   * @type {number}
-   */
+    /**
+     * @const
+     * @type {number}
+     */
   var HEIGHT = 300;
 
-  /**
-   * @const
-   * @type {number}
-   */
+    /**
+     * @const
+     * @type {number}
+     */
   var WIDTH = 700;
 
-  /**
-   * ID уровней.
-   * @enum {number}
-   */
+    /**
+     * ID уровней.
+     * @enum {number}
+     */
   var Level = {
     INTRO: 0,
     MOVE_LEFT: 1,
@@ -49,42 +49,42 @@ window.Game = (function () {
 
   var NAMES = ['Кекс', 'Катя', 'Игорь'];
 
-  /**
-   * Порядок прохождения уровней.
-   * @type {Array.<Level>}
-   */
+    /**
+     * Порядок прохождения уровней.
+     * @type {Array.<Level>}
+     */
   var LevelSequence = [
     Level.INTRO
   ];
 
-  /**
-   * Начальный уровень.
-   * @type {Level}
-   */
+    /**
+     * Начальный уровень.
+     * @type {Level}
+     */
   var INITIAL_LEVEL = LevelSequence[0];
 
-  /**
-   * Допустимые виды объектов на карте.
-   * @enum {number}
-   */
+    /**
+     * Допустимые виды объектов на карте.
+     * @enum {number}
+     */
   var ObjectType = {
     ME: 0,
     FIREBALL: 1
   };
 
-  /**
-   * Допустимые состояния объектов.
-   * @enum {number}
-   */
+    /**
+     * Допустимые состояния объектов.
+     * @enum {number}
+     */
   var ObjectState = {
     OK: 0,
     DISPOSED: 1
   };
 
-  /**
-   * Коды направлений.
-   * @enum {number}
-   */
+    /**
+     * Коды направлений.
+     * @enum {number}
+     */
   var Direction = {
     NULL: 0,
     LEFT: 1,
@@ -93,10 +93,10 @@ window.Game = (function () {
     DOWN: 8
   };
 
-  /**
-   * Карта спрайтов игры.
-   * @type {Object.<ObjectType, Object>}
-   */
+    /**
+     * Карта спрайтов игры.
+     * @type {Object.<ObjectType, Object>}
+     */
   var SpriteMap = {};
   var REVERSED = '-reversed';
 
@@ -106,7 +106,7 @@ window.Game = (function () {
     url: 'img/wizard.gif'
   };
 
-  // TODO: Find a clever way
+    // TODO: Find a clever way
   SpriteMap[ObjectType.ME + REVERSED] = {
     width: 61,
     height: 84,
@@ -119,33 +119,33 @@ window.Game = (function () {
     url: 'img/fireball.gif'
   };
 
-  /**
-   * Правила перерисовки объектов в зависимости от состояния игры.
-   * @type {Object.<ObjectType, function(Object, Object, number): Object>}
-   */
+    /**
+     * Правила перерисовки объектов в зависимости от состояния игры.
+     * @type {Object.<ObjectType, function(Object, Object, number): Object>}
+     */
   var ObjectsBehaviour = {};
 
-  /**
-   * Обновление движения мага. Движение мага зависит от нажатых в данный момент
-   * стрелок. Маг может двигаться одновременно по горизонтали и по вертикали.
-   * На движение мага влияет его пересечение с препятствиями.
-   * @param {Object} object
-   * @param {Object} state
-   * @param {number} timeframe
-   */
+    /**
+     * Обновление движения мага. Движение мага зависит от нажатых в данный момент
+     * стрелок. Маг может двигаться одновременно по горизонтали и по вертикали.
+     * На движение мага влияет его пересечение с препятствиями.
+     * @param {Object} object
+     * @param {Object} state
+     * @param {number} timeframe
+     */
   ObjectsBehaviour[ObjectType.ME] = function (object, state, timeframe) {
-    // Пока зажата стрелка вверх, маг сначала поднимается, а потом левитирует
-    // в воздухе на определенной высоте.
-    // NB! Сложность заключается в том, что поведение описано в координатах
-    // канваса, а не координатах, относительно нижней границы игры.
+        // Пока зажата стрелка вверх, маг сначала поднимается, а потом левитирует
+        // в воздухе на определенной высоте.
+        // NB! Сложность заключается в том, что поведение описано в координатах
+        // канваса, а не координатах, относительно нижней границы игры.
     if (state.keysPressed.UP && object.y > 0) {
       object.direction = object.direction & ~Direction.DOWN;
       object.direction = object.direction | Direction.UP;
       object.y -= object.speed * timeframe * 2;
     }
 
-    // Если стрелка вверх не зажата, а маг находится в воздухе, он плавно
-    // опускается на землю.
+        // Если стрелка вверх не зажата, а маг находится в воздухе, он плавно
+        // опускается на землю.
     if (!state.keysPressed.UP) {
       if (object.y < HEIGHT - object.height) {
         object.direction = object.direction & ~Direction.UP;
@@ -154,21 +154,21 @@ window.Game = (function () {
       }
     }
 
-    // Если зажата стрелка влево, маг перемещается влево.
+        // Если зажата стрелка влево, маг перемещается влево.
     if (state.keysPressed.LEFT) {
       object.direction = object.direction & ~Direction.RIGHT;
       object.direction = object.direction | Direction.LEFT;
       object.x -= object.speed * timeframe;
     }
 
-    // Если зажата стрелка вправо, маг перемещается вправо.
+        // Если зажата стрелка вправо, маг перемещается вправо.
     if (state.keysPressed.RIGHT) {
       object.direction = object.direction & ~Direction.LEFT;
       object.direction = object.direction | Direction.RIGHT;
       object.x += object.speed * timeframe;
     }
 
-    // Ограничения по перемещению по полю. Маг не может выйти за пределы поля.
+        // Ограничения по перемещению по полю. Маг не может выйти за пределы поля.
     if (object.y < 0) {
       object.y = 0;
     }
@@ -186,14 +186,14 @@ window.Game = (function () {
     }
   };
 
-  /**
-   * Обновление движения файрбола. Файрбол выпускается в определенном направлении
-   * и после этого неуправляемо движется по прямой в заданном направлении. Если
-   * он пролетает весь экран насквозь, он исчезает.
-   * @param {Object} object
-   * @param {Object} _state
-   * @param {number} timeframe
-   */
+    /**
+     * Обновление движения файрбола. Файрбол выпускается в определенном направлении
+     * и после этого неуправляемо движется по прямой в заданном направлении. Если
+     * он пролетает весь экран насквозь, он исчезает.
+     * @param {Object} object
+     * @param {Object} _state
+     * @param {number} timeframe
+     */
   ObjectsBehaviour[ObjectType.FIREBALL] = function (object, _state, timeframe) {
     if (object.direction & Direction.LEFT) {
       object.x -= object.speed * timeframe;
@@ -208,13 +208,13 @@ window.Game = (function () {
     }
   };
 
-  /**
-   * ID возможных ответов функций, проверяющих успех прохождения уровня.
-   * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
-   * WIN о том, что раунд выигран, FAIL — о поражении. PAUSE о том, что игру
-   * нужно прервать.
-   * @enum {number}
-   */
+/**
+ * ID возможных ответов функций, проверяющих успех прохождения уровня.
+ * CONTINUE говорит о том, что раунд не закончен и игру нужно продолжать,
+ * WIN о том, что раунд выигран, FAIL — о поражении. PAUSE о том, что игру
+ * нужно прервать.
+ * @enum {number}
+ */
   var Verdict = {
     CONTINUE: 0,
     WIN: 1,
@@ -223,49 +223,49 @@ window.Game = (function () {
     INTRO: 4
   };
 
-  /**
-   * Правила завершения уровня. Ключами служат ID уровней, значениями функции
-   * принимающие на вход состояние уровня и возвращающие true, если раунд
-   * можно завершать или false если нет.
-   * @type {Object.<Level, function(Object):boolean>}
-   */
+/**
+ * Правила завершения уровня. Ключами служат ID уровней, значениями функции
+ * принимающие на вход состояние уровня и возвращающие true, если раунд
+ * можно завершать или false если нет.
+ * @type {Object.<Level, function(Object):boolean>}
+ */
   var LevelsRules = {};
 
-  /**
-   * Уровень считается пройденным, если был выпущен файлболл и он улетел
-   * за экран.
-   * @param {Object} state
-   * @return {Verdict}
-   */
+/**
+ * Уровень считается пройденным, если был выпущен файлболл и он улетел
+ * за экран.
+ * @param {Object} state
+ * @return {Verdict}
+ */
   LevelsRules[Level.INTRO] = function (state) {
     var deletedFireballs = state.garbage.filter(function (object) {
       return object.type === ObjectType.FIREBALL;
     });
 
     var fenceHit = deletedFireballs.filter(function (fireball) {
-      // Did we hit the fence?
+        // Did we hit the fence?
       return fireball.x < 10 && fireball.y > 240;
     })[0];
 
     return fenceHit ? Verdict.WIN : Verdict.CONTINUE;
   };
 
-  /**
-   * Начальные условия для уровней.
-   * @enum {Object.<Level, function>}
-   */
+/**
+ * Начальные условия для уровней.
+ * @enum {Object.<Level, function>}
+ */
   var LevelsInitialize = {};
 
-  /**
-   * Первый уровень.
-   * @param {Object} state
-   * @return {Object}
-   */
+/**
+ * Первый уровень.
+ * @param {Object} state
+ * @return {Object}
+ */
   LevelsInitialize[Level.INTRO] = function (state) {
     state.objects.push(
-      // Установка персонажа в начальное положение. Он стоит в крайнем левом
-      // углу экрана, глядя вправо. Скорость перемещения персонажа на этом
-      // уровне равна 2px за кадр.
+    // Установка персонажа в начальное положение. Он стоит в крайнем левом
+    // углу экрана, глядя вправо. Скорость перемещения персонажа на этом
+    // уровне равна 2px за кадр.
       {
         direction: Direction.RIGHT,
         height: window.GameConstants.Wizard.getHeight(window.GameConstants.Wizard.width),
@@ -277,17 +277,17 @@ window.Game = (function () {
         x: window.GameConstants.Wizard.getX(WIDTH),
         y: window.GameConstants.Wizard.getY(HEIGHT)
       }
-    );
+  );
 
     return state;
   };
 
-  /**
-   * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
-   * и показывает приветственный экран.
-   * @param {Element} container
-   * @constructor
-   */
+/**
+ * Конструктор объекта Game. Создает canvas, добавляет обработчики событий
+ * и показывает приветственный экран.
+ * @param {Element} container
+ * @constructor
+ */
   var Game = function (container) {
     this.container = container;
     this.canvas = document.createElement('canvas');
@@ -326,11 +326,11 @@ window.Game = (function () {
       }
     },
 
-    /**
-     * Состояние игры. Описывает местоположение всех объектов на игровой карте
-     * и время проведенное на уровне и в игре.
-     * @return {Object}
-     */
+/**
+ * Состояние игры. Описывает местоположение всех объектов на игровой карте
+ * и время проведенное на уровне и в игре.
+ * @return {Object}
+ */
     getInitialState: function () {
       return {
         // Статус игры. Если CONTINUE, то игра продолжается.
@@ -362,10 +362,10 @@ window.Game = (function () {
       };
     },
 
-    /**
-     * Начальные проверки и запуск текущего уровня.
-     * @param {boolean=} restart
-     */
+/**
+ * Начальные проверки и запуск текущего уровня.
+ * @param {boolean=} restart
+ */
     initializeLevelAndStart: function (restart) {
       restart = typeof restart === 'undefined' ? true : restart;
 
@@ -380,7 +380,7 @@ window.Game = (function () {
         this.state.currentStatus = Verdict.CONTINUE;
       }
 
-      // Запись времени начала игры и времени начала уровня.
+    // Запись времени начала игры и времени начала уровня.
       this.state.levelStartTime = Date.now();
       if (!this.state.startTime) {
         this.state.startTime = this.state.levelStartTime;
@@ -398,10 +398,10 @@ window.Game = (function () {
       }.bind(this));
     },
 
-    /**
-     * Временная остановка игры.
-     * @param {Verdict=} verdict
-     */
+/**
+ * Временная остановка игры.
+ * @param {Verdict=} verdict
+ */
     pauseLevel: function (verdict) {
       if (verdict) {
         this.state.currentStatus = verdict;
@@ -416,12 +416,12 @@ window.Game = (function () {
       this._drawPauseScreen();
     },
 
-    /**
-     * Обработчик событий клавиатуры во время паузы.
-     * @param {KeyboardsEvent} evt
-     * @private
-     * @private
-     */
+/**
+ * Обработчик событий клавиатуры во время паузы.
+ * @param {KeyboardsEvent} evt
+ * @private
+ * @private
+ */
     _pauseListener: function (evt) {
       if (evt.keyCode === 32 && !this._deactivated) {
         evt.preventDefault();
@@ -433,9 +433,9 @@ window.Game = (function () {
       }
     },
 
-    /**
-     * Отрисовка экрана паузы.
-     */
+/**
+ * Отрисовка экрана паузы.
+ */
     _drawPauseScreen: function () {
       var message;
       switch (this.state.currentStatus) {
@@ -527,11 +527,11 @@ window.Game = (function () {
       });
     },
 
-    /**
-     * Предзагрузка необходимых изображений для уровня.
-     * @param {function} callback
-     * @private
-     */
+/**
+ * Предзагрузка необходимых изображений для уровня.
+ * @param {function} callback
+ * @private
+ */
     _preloadImagesForLevel: function (callback) {
       if (typeof this._imagesArePreloaded === 'undefined') {
         this._imagesArePreloaded = [];
@@ -564,19 +564,19 @@ window.Game = (function () {
       }
     },
 
-    /**
-     * Обновление статуса объектов на экране. Добавляет объекты, которые должны
-     * появиться, выполняет проверку поведения всех объектов и удаляет те, которые
-     * должны исчезнуть.
-     * @param {number} delta Время, прошеднее с отрисовки прошлого кадра.
-     */
+/**
+ * Обновление статуса объектов на экране. Добавляет объекты, которые должны
+ * появиться, выполняет проверку поведения всех объектов и удаляет те, которые
+ * должны исчезнуть.
+ * @param {number} delta Время, прошеднее с отрисовки прошлого кадра.
+ */
     updateObjects: function (delta) {
-      // Персонаж.
+    // Персонаж.
       var me = this.state.objects.filter(function (object) {
         return object.type === ObjectType.ME;
       })[0];
 
-      // Добавляет на карту файрбол по нажатию на Shift.
+    // Добавляет на карту файрбол по нажатию на Shift.
       if (this.state.keysPressed.SHIFT) {
         this.state.objects.push({
           direction: me.direction,
@@ -594,7 +594,7 @@ window.Game = (function () {
 
       this.state.garbage = [];
 
-      // Убирает в garbage не используемые на карте объекты.
+    // Убирает в garbage не используемые на карте объекты.
       var remainingObjects = this.state.objects.filter(function (object) {
         ObjectsBehaviour[object.type](object, this.state, delta);
 
@@ -609,12 +609,12 @@ window.Game = (function () {
       this.state.objects = remainingObjects;
     },
 
-    /**
-     * Проверка статуса текущего уровня.
-     */
+/**
+ * Проверка статуса текущего уровня.
+ */
     checkStatus: function () {
-      // Нет нужны запускать проверку, нужно ли останавливать уровень, если
-      // заранее известно, что да.
+    // Нет нужны запускать проверку, нужно ли останавливать уровень, если
+    // заранее известно, что да.
       if (this.state.currentStatus !== Verdict.CONTINUE) {
         return;
       }
@@ -623,11 +623,11 @@ window.Game = (function () {
         // Проверки, не зависящие от уровня, но влияющие на его состояние.
         this.commonRules = [
 
-          /**
-           * Если персонаж мертв, игра прекращается.
-           * @param {Object} state
-           * @return {Verdict}
-           */
+            /**
+             * Если персонаж мертв, игра прекращается.
+             * @param {Object} state
+             * @return {Verdict}
+             */
           function (state) {
             var me = state.objects.filter(function (object) {
               return object.type === ObjectType.ME;
@@ -638,20 +638,20 @@ window.Game = (function () {
               Verdict.CONTINUE;
           },
 
-          /**
-           * Если нажата клавиша Esc игра ставится на паузу.
-           * @param {Object} state
-           * @return {Verdict}
-           */
+            /**
+             * Если нажата клавиша Esc игра ставится на паузу.
+             * @param {Object} state
+             * @return {Verdict}
+             */
           function (state) {
             return state.keysPressed.ESC ? Verdict.PAUSE : Verdict.CONTINUE;
           },
 
-          /**
-           * Игра прекращается если игрок продолжает играть в нее два часа подряд.
-           * @param {Object} state
-           * @return {Verdict}
-           */
+            /**
+             * Игра прекращается если игрок продолжает играть в нее два часа подряд.
+             * @param {Object} state
+             * @return {Verdict}
+             */
           function (state) {
             return Date.now() - state.startTime > 3 * 60 * 1000 ?
               Verdict.FAIL :
@@ -660,11 +660,11 @@ window.Game = (function () {
         ];
       }
 
-      // Проверка всех правил влияющих на уровень. Запускаем цикл проверок
-      // по всем универсальным проверкам и проверкам конкретного уровня.
-      // Цикл продолжается до тех пор, пока какая-либо из проверок не вернет
-      // любое другое состояние кроме CONTINUE или пока не пройдут все
-      // проверки. После этого состояние сохраняется.
+    // Проверка всех правил влияющих на уровень. Запускаем цикл проверок
+    // по всем универсальным проверкам и проверкам конкретного уровня.
+    // Цикл продолжается до тех пор, пока какая-либо из проверок не вернет
+    // любое другое состояние кроме CONTINUE или пока не пройдут все
+    // проверки. После этого состояние сохраняется.
       var allChecks = this.commonRules.concat(LevelsRules[this.level]);
       var currentCheck = Verdict.CONTINUE;
       var currentRule;
@@ -677,28 +677,28 @@ window.Game = (function () {
       this.state.currentStatus = currentCheck;
     },
 
-    /**
-     * Принудительная установка состояния игры. Используется для изменения
-     * состояния игры от внешних условий, например, когда необходимо остановить
-     * игру, если она находится вне области видимости и установить вводный
-     * экран.
-     * @param {Verdict} status
-     */
+/**
+ * Принудительная установка состояния игры. Используется для изменения
+ * состояния игры от внешних условий, например, когда необходимо остановить
+ * игру, если она находится вне области видимости и установить вводный
+ * экран.
+ * @param {Verdict} status
+ */
     setGameStatus: function (status) {
       if (this.state.currentStatus !== status) {
         this.state.currentStatus = status;
       }
     },
 
-    /**
-     * Отрисовка всех объектов на экране.
-     */
+/**
+ * Отрисовка всех объектов на экране.
+ */
     render: function () {
-      // Удаление всех отрисованных на странице элементов.
+    // Удаление всех отрисованных на странице элементов.
       this.ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-      // Выставление всех элементов, оставшихся в this.state.objects согласно
-      // их координатам и направлению.
+    // Выставление всех элементов, оставшихся в this.state.objects согласно
+    // их координатам и направлению.
       this.state.objects.forEach(function (object) {
         if (object.sprite) {
           var reversed = object.direction & Direction.LEFT;
@@ -708,12 +708,12 @@ window.Game = (function () {
       }, this);
     },
 
-    /**
-     * Основной игровой цикл. Сначала проверяет состояние всех объектов игры
-     * и обновляет их согласно правилам их поведения, а затем запускает
-     * проверку текущего раунда. Рекурсивно продолжается до тех пор, пока
-     * проверка не вернет состояние FAIL, WIN или PAUSE.
-     */
+/**
+ * Основной игровой цикл. Сначала проверяет состояние всех объектов игры
+ * и обновляет их согласно правилам их поведения, а затем запускает
+ * проверку текущего раунда. Рекурсивно продолжается до тех пор, пока
+ * проверка не вернет состояние FAIL, WIN или PAUSE.
+ */
     update: function () {
       if (!this.state.lastUpdated) {
         this.state.lastUpdated = Date.now();
@@ -741,10 +741,10 @@ window.Game = (function () {
       }
     },
 
-    /**
-     * @param {KeyboardEvent} evt [description]
-     * @private
-     */
+/**
+ * @param {KeyboardEvent} evt [description]
+ * @private
+ */
     _onKeyDown: function (evt) {
       switch (evt.keyCode) {
         case 37:
@@ -766,10 +766,10 @@ window.Game = (function () {
       }
     },
 
-    /**
-     * @param {KeyboardEvent} evt [description]
-     * @private
-     */
+/**
+ * @param {KeyboardEvent} evt [description]
+ * @private
+ */
     _onKeyUp: function (evt) {
       switch (evt.keyCode) {
         case 37:
@@ -791,13 +791,13 @@ window.Game = (function () {
       }
     },
 
-    /** @private */
+/** @private */
     _initializeGameListeners: function () {
       window.addEventListener('keydown', this._onKeyDown);
       window.addEventListener('keyup', this._onKeyUp);
     },
 
-    /** @private */
+/** @private */
     _removeGameListeners: function () {
       window.removeEventListener('keydown', this._onKeyDown);
       window.removeEventListener('keyup', this._onKeyUp);
@@ -812,3 +812,4 @@ window.Game = (function () {
 
   return game;
 })();
+
