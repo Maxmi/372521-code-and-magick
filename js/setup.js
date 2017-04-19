@@ -1,12 +1,22 @@
 'use strict';
-// Покажите блок .setup, убрав у него класс .hidden.
+// Окно .setup должно открываться по нажатию на блок .setup-open.
+// Открытие окна производится удалением класса hidden у блока
 var userDialog = document.querySelector('.setup');
+var setupOpen = document.querySelector('.setup-open');
+var setupClose = userDialog.querySelector('.setup-close');
 
-userDialog.classList.remove('hidden');
+var wiz = document.querySelector('.wizard');
+var wizardCoat = wiz.querySelector('.wizard-coat');
+var wizardEyes = wiz.querySelector('.wizard-eyes');
+var fireball = document.querySelector('.setup-fireball-wrap');
 
-var similarListElement = userDialog.querySelector('.setup-similar-list');
-
-var similarWizardTemplate = document.querySelector('#similar-wizard-template').content;
+var FIREBALL_COLOR = [
+  '#ee4830',
+  '#30a8ee',
+  '#5ce6c0',
+  '#e848d5',
+  '#e6e848'
+];
 
 var WIZARD_NAMES = [
   'Иван',
@@ -46,6 +56,78 @@ var EYE_COLOR = [
   'yellow',
   'green'
 ];
+
+var ESC_KEY_CODE = 27;
+
+var onEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    closePopup();
+  }
+};
+
+var openPopup = function () {
+  userDialog.classList.remove('hidden');
+  document.addEventListener('keydown', onEscPress);
+};
+
+var closePopup = function () {
+  userDialog.classList.add('hidden');
+  document.removeEventListener('keydown', onEscPress);
+};
+
+
+var ENTER_KEY_CODE = 13;
+
+var similarListElement = userDialog.querySelector('.setup-similar-list');
+
+var similarWizardTemplate = document.querySelector('#similar-wizard-template').content;
+
+
+setupOpen.addEventListener('click', function () {
+  openPopup();
+});
+
+setupClose.addEventListener('click', function () {
+  closePopup();
+});
+
+setupOpen.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEY_CODE) {
+    openPopup();
+  }
+});
+
+
+setupClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEY_CODE) {
+    closePopup();
+  }
+});
+
+
+wizardCoat.addEventListener('click', function () {
+  wizardCoat.style.fill = getRandomItem(COAT_COLOR);
+});
+
+wizardEyes.addEventListener('click', function () {
+  wizardEyes.style.fill = getRandomItem(EYE_COLOR);
+});
+
+
+fireball.addEventListener('click', function () {
+  fireball.style.backgroundColor = getRandomItem(FIREBALL_COLOR);
+});
+
+
+var username = userDialog.querySelector('.setup-user-name');
+username.required = true;
+username.maxlength = 50;
+
+username.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === 27) {
+    evt.stopPropagation();
+  }
+});
 
 
 function getRandomItem(array) {
