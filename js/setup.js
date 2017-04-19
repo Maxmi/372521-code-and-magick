@@ -5,9 +5,9 @@ var userDialog = document.querySelector('.setup');
 var setupOpen = document.querySelector('.setup-open');
 var setupClose = userDialog.querySelector('.setup-close');
 
-var wizard = document.querySelector('.wizard');
-var wizardCoat = wizard.querySelector('.wizard-coat');
-var wizardEyes = wizard.querySelector('.wizard-eyes');
+var wiz = document.querySelector('.wizard');
+var wizardCoat = wiz.querySelector('.wizard-coat');
+var wizardEyes = wiz.querySelector('.wizard-eyes');
 var fireball = document.querySelector('.setup-fireball-wrap');
 
 var FIREBALL_COLOR = [
@@ -158,7 +158,7 @@ function setupWizards() {
 // соответствующие случайно сгенерированным волшебникам
 // и заполните их данными из массива
 
-var renderWizard = function (wiz) {
+var renderWizard = function (wizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
 
   wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
