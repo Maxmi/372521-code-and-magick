@@ -13,27 +13,27 @@
 
 
   setupOpen.addEventListener('click', function () {
-    window.openPopup();
+    window.dialog.openPopup();
   });
 
   setupClose.addEventListener('click', function () {
-    window.closePopup();
+    window.dialog.closePopup();
   });
 
   setupOpen.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.ENTER_KEY_CODE) {
-      window.openPopup();
+    if (evt.keyCode === window.dialog.ENTER_KEY_CODE) {
+      window.dialog.openPopup();
     }
   });
 
   setupClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.ENTER_KEY_CODE) {
-      window.closePopup();
+    if (evt.keyCode === window.dialog.ENTER_KEY_CODE) {
+      window.dialog.closePopup();
     }
   });
 
   username.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.ESC_KEY_CODE) {
+    if (evt.keyCode === window.dialog.ESC_KEY_CODE) {
       evt.stopPropagation();
     }
   });
@@ -41,7 +41,7 @@
 
   // Покажите блок .setup-similar, удалив у него CSS-класс hidden.
   userDialog.querySelector('.setup-similar').classList.remove('hidden');
-  window.showWizardsList();
+  window.drawWiz.showWizardsList();
 
 
 })();

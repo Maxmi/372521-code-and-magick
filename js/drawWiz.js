@@ -1,6 +1,6 @@
 'use strict';
 
-(function drawWiz() {
+window.drawWiz = (function drawWizModule() {
   var wizConst = window.wizardConstants;
   var userDialog = document.querySelector('.setup');
   var similarListElement = userDialog.querySelector('.setup-similar-list');
@@ -11,16 +11,16 @@
   var fireball = document.querySelector('.setup-fireball-wrap');
 
   wizardCoat.addEventListener('click', function () {
-    wizardCoat.style.fill = window.getRandomItem(wizConst.COAT_COLOR);
+    wizardCoat.style.fill = window.helpers.getRandomItem(wizConst.COAT_COLOR);
   });
 
   wizardEyes.addEventListener('click', function () {
-    wizardEyes.style.fill = window.getRandomItem(wizConst.EYE_COLOR);
+    wizardEyes.style.fill = window.helpers.getRandomItem(wizConst.EYE_COLOR);
   });
 
 
   fireball.addEventListener('click', function () {
-    fireball.style.backgroundColor = window.getRandomItem(wizConst.FIREBALL_COLOR);
+    fireball.style.backgroundColor = window.helpers.getRandomItem(wizConst.FIREBALL_COLOR);
   });
 
   // Создайте массив, состоящий из 4 сгенерированных из JS объектов
@@ -28,9 +28,9 @@
     var wizards = [];
     for (var i = 0; i < 4; i++) {
       wizards[i] = {
-        name: window.getRandomName(),
-        coatColor: window.getRandomItem(wizConst.COAT_COLOR),
-        eyeColor: window.getRandomItem(wizConst.EYE_COLOR)
+        name: window.helpers.getRandomName(),
+        coatColor: window.helpers.getRandomItem(wizConst.COAT_COLOR),
+        eyeColor: window.helpers.getRandomItem(wizConst.EYE_COLOR)
       };
     }
     return wizards;
@@ -54,7 +54,7 @@
 
   // Отрисуйте сгенерированные DOM-элементы в блок .setup-similar-list.
   // Для вставки элементов используйте DocumentFragment
-  window.showWizardsList = function () {
+  var showWizardsList = function () {
     var fragment = document.createDocumentFragment();
 
     var wizards = setupWizards();
@@ -64,5 +64,7 @@
 
     similarListElement.appendChild(fragment);
   };
-
+  return {
+    showWizardsList: showWizardsList
+  };
 })();

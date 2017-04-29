@@ -1,13 +1,17 @@
 'use strict';
 
-(function () {
-  window.getRandomItem = function (array) {
+window.helpers = (function helpersModule() {
+  var getRandomItem = function (array) {
     return array[Math.floor(Math.random() * array.length)];
   };
 
-  window.getRandomName = function () {
-    return window.getRandomItem(window.wizardConstants.WIZARD_NAMES) + ' ' +
-        window.getRandomItem(window.wizardConstants.WIZARD_LAST_NAMES);
+  var getRandomName = function () {
+    return getRandomItem(window.wizardConstants.WIZARD_NAMES) + ' ' +
+        getRandomItem(window.wizardConstants.WIZARD_LAST_NAMES);
   };
 
+  return {
+    getRandomItem,
+    getRandomName
+  };
 })();
