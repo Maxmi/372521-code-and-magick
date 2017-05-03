@@ -7,6 +7,9 @@ env:
 globals:
   define: true
 
+parserOptions:
+  ecmaVersion: 6
+
 extends:
   "htmlacademy/es5"
 
