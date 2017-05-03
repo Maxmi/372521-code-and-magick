@@ -1,6 +1,6 @@
 'use strict';
 
-window.helpers = (function helpersModule() {
+window.helpers = (function () {
   var getRandomItem = function (array) {
     return array[Math.floor(Math.random() * array.length)];
   };
